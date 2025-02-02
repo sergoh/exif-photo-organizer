@@ -25,7 +25,7 @@ A simple tool that fixes photo timestamps so they show up in the correct order w
 1. **Open the Terminal app** (Find it in Applications → Utilities).
 2. **Navigate to your photos folder**, then **run the program**:
    ```bash
-   cd /Users/YOURNAME/Pictures/YOURFOLDER
+   cd /PATH/TO/YOUR/PICTURE/FOLDER
    chmod +x exif-photo-organizer-mac
    ./exif-photo-organizer-mac
    ```
