@@ -1,9 +1,10 @@
 import os
-import piexif
-import piexif.helper
+import shutil
+import time
 from PIL import Image
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
+import piexif
 
 # Load environment variables from .env (optional for local development)
 load_dotenv()
@@ -11,11 +12,14 @@ load_dotenv()
 # Use IMAGE_FOLDER from env or default to the current directory
 IMAGE_FOLDER = os.getenv("IMAGE_FOLDER", os.getcwd())
 
+# Output folder for renamed copies (same as input folder)
+OUTPUT_FOLDER = os.getenv("OUTPUT_FOLDER", IMAGE_FOLDER)
+
 # Base timestamp starts from the current time
 base_timestamp = datetime.now()
-time_increment = timedelta(seconds=10)
+time_increment = timedelta(seconds=1)  # Each new file is 1 second apart
 
-# Get all image files and sort by filename (ensure proper order)
+# Get all image files and sort by filename (ensuring proper order)
 image_files = sorted([
     f for f in os.listdir(IMAGE_FOLDER)
     if f.lower().endswith(('.jpg', '.jpeg'))
@@ -25,20 +29,21 @@ if not image_files:
     print(f"❌ No images found in '{IMAGE_FOLDER}'!")
     exit(1)
 
-print(f"📷 Found {len(image_files)} images in '{IMAGE_FOLDER}'. Updating EXIF metadata and titles...\n")
+print(f"📷 Found {len(image_files)} images in '{IMAGE_FOLDER}'. Creating ordered copies...\n")
 
 for index, filename in enumerate(image_files):
-    file_path = os.path.join(IMAGE_FOLDER, filename)
+    old_file_path = os.path.join(IMAGE_FOLDER, filename)
+
+    # Generate new filename: "Wedding Picture 01.jpg"
+    new_filename = f"Wedding Picture {index + 1:02d}.jpg"
+    new_file_path = os.path.join(OUTPUT_FOLDER, new_filename)
 
     # Open image
-    img = Image.open(file_path)
+    img = Image.open(old_file_path)
 
     # Create a new timestamp based on order
     new_timestamp = base_timestamp + (index * time_increment)
     formatted_time = new_timestamp.strftime("%Y:%m:%d %H:%M:%S")
-
-    # Generate title: "Wedding Picture 01"
-    title = f"Wedding Picture {index + 1:02d}"
 
     # Load existing EXIF data
     exif_dict = piexif.load(img.info.get("exif", b""))
@@ -47,13 +52,17 @@ for index, filename in enumerate(image_files):
     exif_dict["Exif"][piexif.ExifIFD.DateTimeOriginal] = formatted_time.encode()
     exif_dict["Exif"][piexif.ExifIFD.DateTimeDigitized] = formatted_time.encode()
 
-    # ✅ Set title in UserComment field
-    exif_dict["Exif"][piexif.ExifIFD.UserComment] = piexif.helper.UserComment.dump(title)
-
-    # Save modified EXIF data
+    # Save modified EXIF data in new copy
     exif_bytes = piexif.dump(exif_dict)
-    img.save(file_path, "jpeg", exif=exif_bytes)
+    img.save(new_file_path, "jpeg", exif=exif_bytes)
 
-    print(f"✅ Updated {filename} -> {formatted_time}, Title: {title}")
+    # ✅ Modify file system timestamps (creation & modification date)
+    timestamp_seconds = new_timestamp.timestamp()
+    os.utime(new_file_path, (timestamp_seconds, timestamp_seconds))
 
-print("\n🎉 All images have been updated with new EXIF timestamps and titles for Apple Photos!")
+    print(f"✅ Created {new_filename} -> {formatted_time}")
+
+    # Small delay to prevent identical timestamps
+    time.sleep(1)
+
+print("\n🎉 All images have been copied, renamed, and timestamps adjusted successfully!")
