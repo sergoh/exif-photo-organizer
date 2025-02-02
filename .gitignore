@@ -1,0 +1,9 @@
+# Ignore Python cache and virtual envs
+__pycache__/
+*.pyc
+*.pyo
+*.log
+.env
+
+# Ignore images that shouldn't be pushed
+photos/*

@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "exif-photo-organizer"
+version = "0.1.0"
+description = "A tool to modify EXIF data for proper ordering in iPhone Photos."
+authors = ["Sergoh <sergoh@outlook.com>"]
+package-mode = true
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.14"
+pillow = "^10.0"
+piexif = "^1.1.3"
+python-dotenv = "^1.0.1"
+
+[tool.poetry.scripts]
+update-exif = "exif_photo_organizer.update_exif:main"
+[tool.poetry.group.dev.dependencies]
+pyinstaller = "^6.11.1"
+
