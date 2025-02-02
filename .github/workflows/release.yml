@@ -50,7 +50,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Ensure full repo history for tagging
+          fetch-depth: 0  # REQUIRED for pushing tags
 
       - name: Get Version Tag
         id: get_tag
@@ -66,7 +66,8 @@ jobs:
           GH_PAT: ${{ secrets.GH_PAT }}
         run: |
           git tag $TAG_NAME
-          git push https://$GH_PAT@github.com/${{ github.repository }} $TAG_NAME
+          git remote set-url origin https://$GH_PAT@github.com/${{ github.repository }}
+          git push origin $TAG_NAME
 
       - name: Download Artifact
         uses: actions/download-artifact@v4
