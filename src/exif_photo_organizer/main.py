@@ -5,15 +5,16 @@ from PIL import Image
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import piexif
-# Triggering a new GitHub Actions build
+
 # Load environment variables from .env (optional for local development)
 load_dotenv()
 
 # Use IMAGE_FOLDER from env or default to the current directory
 IMAGE_FOLDER = os.getenv("IMAGE_FOLDER", os.getcwd())
 
-# Output folder for renamed copies (same as input folder)
-OUTPUT_FOLDER = os.getenv("OUTPUT_FOLDER", IMAGE_FOLDER)
+# Create output folder inside IMAGE_FOLDER
+OUTPUT_FOLDER = os.path.join(IMAGE_FOLDER, "output")
+os.makedirs(OUTPUT_FOLDER, exist_ok=True)  # Ensure output folder exists
 
 # Base timestamp starts from the current time
 base_timestamp = datetime.now()
@@ -29,13 +30,13 @@ if not image_files:
     print(f"❌ No images found in '{IMAGE_FOLDER}'!")
     exit(1)
 
-print(f"📷 Found {len(image_files)} images in '{IMAGE_FOLDER}'. Creating ordered copies...\n")
+print(f"📷 Found {len(image_files)} images in '{IMAGE_FOLDER}'. Creating ordered copies in '{OUTPUT_FOLDER}'...\n")
 
 for index, filename in enumerate(image_files):
     old_file_path = os.path.join(IMAGE_FOLDER, filename)
 
-    # Generate new filename: "Wedding Picture 01.jpg"
-    new_filename = f"Wedding Picture {index + 1:02d}.jpg"
+    # Generate new filename: "Picture 01.jpg"
+    new_filename = f"Picture {index + 1:02d}.jpg"
     new_file_path = os.path.join(OUTPUT_FOLDER, new_filename)
 
     # Open image
@@ -63,6 +64,6 @@ for index, filename in enumerate(image_files):
     print(f"✅ Created {new_filename} -> {formatted_time}")
 
     # Small delay to prevent identical timestamps
-    time.sleep(1)
+    time.sleep(0.5)
 
 print("\n🎉 All images have been copied, renamed, and timestamps adjusted successfully!")
