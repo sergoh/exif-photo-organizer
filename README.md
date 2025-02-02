@@ -8,7 +8,7 @@ A simple tool that fixes photo timestamps so they show up in the correct order w
 
 ### **1️⃣ Download the Program**  
 1. **Go to the download page**:  
-   [🔗 Latest Release](https://github.com/YOUR_GITHUB_USERNAME/exif-photo-organizer/releases/latest)
+   [🔗 Latest Release](https://github.com/sergoh/exif-photo-organizer/releases/latest)
 2. **Download the correct file**:
    - **Mac**: `exif-photo-organizer-mac`
    - **Windows**: `exif-photo-organizer-win.exe`
