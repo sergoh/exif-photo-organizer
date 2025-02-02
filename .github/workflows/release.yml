@@ -45,6 +45,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Get Version Tag
+        id: get_tag
+        run: echo "TAG_NAME=v1.0.$(date +%s)" >> $GITHUB_ENV  # Generates a unique version tag
+
+      - name: Create Git Tag
+        run: |
+          git tag $TAG_NAME
+          git push origin $TAG_NAME
+
       - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
@@ -54,6 +66,7 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ env.TAG_NAME }}  # Use generated tag
           files: dist/exif-photo-organizer*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
