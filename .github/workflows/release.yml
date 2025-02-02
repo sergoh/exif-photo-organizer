@@ -54,20 +54,29 @@ jobs:
 
       - name: Get Version Tag
         id: get_tag
-        run: echo "TAG_NAME=v1.0.$(date +%s)" >> $GITHUB_ENV
+        run: |
+          echo "Generating new tag..."
+          echo "TAG_NAME=v1.0.$(date +%s)" >> $GITHUB_ENV
+          echo "Generated tag: $TAG_NAME"
 
       - name: Configure Git User
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
 
+      - name: Debug Git Remote
+        run: |
+          echo "Checking Git Remote URL..."
+          git remote -v
+
       - name: Authenticate & Push Git Tag
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
         run: |
-          git tag $TAG_NAME
+          echo "Setting Git Remote with PAT..."
           git remote set-url origin https://$GH_PAT@github.com/${{ github.repository }}
-          git push origin $TAG_NAME
+          git tag $TAG_NAME
+          git push origin $TAG_NAME || (echo "❌ Failed to push tag"; exit 1)
 
       - name: Download Artifact
         uses: actions/download-artifact@v4
@@ -81,4 +90,4 @@ jobs:
           tag_name: ${{ env.TAG_NAME }}
           files: dist/exif-photo-organizer*
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}  # Make sure to use GH_PAT
