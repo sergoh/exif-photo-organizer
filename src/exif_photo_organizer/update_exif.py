@@ -4,6 +4,7 @@ import piexif.helper
 from PIL import Image
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
+# Triggering a new GitHub Actions build
 
 # Load environment variables from .env (optional for local development)
 load_dotenv()
