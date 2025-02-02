@@ -6,6 +6,12 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: write  # ✅ Grants permission to push tags
+  actions: read
+  checks: read
+  security-events: read
+
 jobs:
   build:
     name: Build Executable
