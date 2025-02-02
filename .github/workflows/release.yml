@@ -40,9 +40,12 @@ jobs:
 
   build:
     name: Build Executable
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     needs: check-changes
     if: needs.check-changes.outputs.code_changed == 'true'  # ✅ Only run if code changes exist
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
       - name: Checkout Code
@@ -64,15 +67,36 @@ jobs:
       - name: Install PyInstaller
         run: poetry add --dev pyinstaller
 
-      - name: Build Executable
+      - name: Build Executable (Linux/Mac)
+        if: runner.os == 'Linux' || runner.os == 'macOS'
         run: |
-          poetry run pyinstaller --onefile --name exif-photo-organizer update_exif.py
+          poetry run pyinstaller --onefile --name exif-photo-organizer-${{ runner.os }} update_exif.py
 
-      - name: Upload Executable Artifact
+      - name: Build Executable (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          poetry run pyinstaller --onefile --name exif-photo-organizer-win update_exif.py
+
+      - name: Upload Mac Executable
+        if: runner.os == 'macOS'
         uses: actions/upload-artifact@v4
         with:
-          name: exif-photo-organizer
-          path: dist/exif-photo-organizer*
+          name: exif-photo-organizer-mac
+          path: dist/exif-photo-organizer-mac
+
+      - name: Upload Linux Executable
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: exif-photo-organizer-linux
+          path: dist/exif-photo-organizer-Linux
+
+      - name: Upload Windows Executable
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: exif-photo-organizer-win
+          path: dist/exif-photo-organizer-win.exe
 
   release:
     name: Create GitHub Release
@@ -105,16 +129,31 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Download Artifact
+      - name: Download Mac Executable
         uses: actions/download-artifact@v4
         with:
-          name: exif-photo-organizer
+          name: exif-photo-organizer-mac
+          path: dist/
+
+      - name: Download Linux Executable
+        uses: actions/download-artifact@v4
+        with:
+          name: exif-photo-organizer-linux
+          path: dist/
+
+      - name: Download Windows Executable
+        uses: actions/download-artifact@v4
+        with:
+          name: exif-photo-organizer-win
           path: dist/
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.TAG_NAME }}
-          files: dist/exif-photo-organizer*
+          files: 
+            - dist/exif-photo-organizer-mac
+            - dist/exif-photo-organizer-linux
+            - dist/exif-photo-organizer-win.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Uses built-in token
