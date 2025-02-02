@@ -22,14 +22,21 @@ A simple tool that fixes photo timestamps so they show up in the correct order w
 ## 🚀 How to Run the Program  
 
 ### **🖥️ Mac (Apple)**
-1. **Open the Terminal app** (Find it in Applications → Utilities).
-2. **Navigate to your photos folder**, then **run the program**:
+1. **Find Your Photos Folder Path**:
+   - Open **Finder**.
+   - Navigate to the folder where your photos are stored.
+   - **Right-click the folder** and select **"Get Info"**.
+   - Look for **"Where:"** and copy the full path.
+   - Alternatively, drag the folder into the Terminal to automatically paste the path.
+
+2. **Open the Terminal app** (Find it in Applications → Utilities).
+3. **Navigate to your photos folder**, then **run the program**:
    ```bash
    cd /PATH/TO/YOUR/PICTURE/FOLDER
    chmod +x exif-photo-organizer-mac
    ./exif-photo-organizer-mac
    ```
-   _(Replace "YOURNAME" with your actual username, and "YOURFOLDER" with the folder name where your photos are stored.)_
+   _(Replace "/PATH/TO/YOUR/PICTURE/FOLDER" with the actual path you copied from Finder.)_
 
 #### **🔧 If You See a macOS Security Warning**
 If you get an error saying **"Apple cannot verify the app for malware"**, follow these steps:
@@ -142,61 +149,9 @@ By default, the script **modifies images in the current directory**.
 ### **Optional: Using a `.env` file for a Custom Folder**
 If you want to specify a different folder for development, you can use a `.env` file.
 
-#### **Steps to set it up:**
-1. **Copy the example file:**
-   ```bash
-   cp .env.example .env
-   ```
-2. **Edit `.env` and set the correct path** to your photos directory:
-   ```ini
-   IMAGE_FOLDER=/Users/yourusername/path/to/photos
-   ```
-3. **Save the file.**
-
-If no `.env` file is present, the script will default to using the **current directory** where it is executed.
-
----
-
-## 🛠️ Building a Standalone Executable
-
-If you want to create a **buildable package** that runs without Python installed, you can use **PyInstaller**.
-
-### **Steps to Build:**
-
-1. **Ensure PyInstaller is installed**:
-   ```bash
-   poetry add --dev pyinstaller
-   ```
-
-2. **Create the standalone executable**:
-   ```bash
-   poetry run pyinstaller --onefile --name exif-photo-organizer update_exif.py
-   ```
-
-3. **Locate the built executable**:
-   - On **Mac/Linux**, the file will be in:
-     ```bash
-     ./dist/exif-photo-organizer
-     ```
-   - On **Windows**, it will be in:
-     ```powershell
-     dist\exif-photo-organizer.exe
-     ```
-
-4. **Run the generated executable**:
-   ```bash
-   ./dist/exif-photo-organizer  # Mac/Linux
-   ```
-   ```powershell
-   dist\exif-photo-organizer.exe  # Windows
-   ```
-
-Now users can run the tool **without needing to install Python** by downloading the pre-built executable.
-
 ---
 
 ## 🌟 Credits  
 Made with ❤️ by **Sergoh**  
 
 📚 **License:** MIT License  
-
