@@ -89,41 +89,6 @@ Then, try running the program again:
 
 ---
 
-## ✅ What This Program Does
-- **Finds all photos (.JPG, .JPEG) in the folder.**
-- **Fixes their timestamps so they appear in order on your iPhone.**
-- **Takes only a few seconds to complete.**
-
-When finished, you'll see ✅ confirmation messages.
-
----
-
-## 🔍 How to Check If It Worked  
-If you want to **verify that the timestamps were updated correctly**, you can check the photo details:
-
-### **Mac**  
-1. Right-click the photo → Click **Get Info**.  
-2. Check the **Date Created** and **Date Modified** fields.  
-
-### **Windows**  
-1. Right-click the photo → Click **Properties** → Go to the **Details** tab.  
-2. Check the **Date Taken** and **Created Date** fields.
-
----
-
-## ❌ Troubleshooting  
-
-### **1️⃣ The program says "No images found"**  
-✅ Make sure your **photos are in the same folder as the program**.  
-✅ Double-check the **folder name** before running the program.
-
-### **2️⃣ Photos are still out of order on iPhone**  
-✅ Try **AirDropping them in small batches**.  
-✅ Ensure that the **modified timestamps** are correct (`exiftool` can help check this).  
-✅ If necessary, delete the photos from your iPhone and **re-import them**.
-
----
-
 ## 🛠️ For Developers: Running the Script Manually  
 
 If you want to use the Python script directly **(instead of using the compiled executable)**:
@@ -146,8 +111,44 @@ poetry run python update_exif.py
 
 By default, the script **modifies images in the current directory**.
 
-### **Optional: Using a `.env` file for a Custom Folder**
-If you want to specify a different folder for development, you can use a `.env` file.
+---
+
+## 🛠️ Building a Standalone Executable
+If you want to manually build a standalone executable without relying on GitHub Actions, follow these steps:
+
+### **1️⃣ Install PyInstaller**
+Make sure you have **Poetry** installed and run:
+```bash
+poetry add --dev pyinstaller
+```
+
+### **2️⃣ Build the Executable for Your OS**
+Run one of the following based on your operating system:
+
+#### **Mac (Apple)**
+```bash
+poetry run pyinstaller --onefile --name exif-photo-organizer-mac update_exif.py
+```
+
+#### **Windows**
+```powershell
+poetry run pyinstaller --onefile --name exif-photo-organizer-win.exe update_exif.py
+```
+
+#### **Linux**
+```bash
+poetry run pyinstaller --onefile --name exif-photo-organizer-linux update_exif.py
+```
+
+### **3️⃣ Locate the Built Executable**
+- **Mac/Linux:**  
+  ```bash
+  ./dist/exif-photo-organizer-mac  # or exif-photo-organizer-linux
+  ```
+- **Windows:**  
+  ```powershell
+  dist\exif-photo-organizer-win.exe
+  ```
 
 ---
 
