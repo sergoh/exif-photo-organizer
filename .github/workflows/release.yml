@@ -73,26 +73,15 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
 
-      - name: Debug Git Remote & Authentication
-        env:
-          GH_PAT: ${{ secrets.GH_PAT }}
-        run: |
-          echo "🔍 Checking Git Remote..."
-          git remote -v
-          echo "🔍 Setting Git Remote with PAT..."
-          git remote set-url origin https://$GH_PAT@github.com/${{ github.repository }}
-          echo "✅ Git Remote is now set to:"
-          git remote -v
-          echo "🔍 Testing Push Access..."
-          git push --dry-run origin main || (echo "❌ Push test failed"; exit 1)
-
       - name: Authenticate & Push Git Tag
         env:
-          GH_PAT: ${{ secrets.GH_PAT }}
+          GITHUB_APP_TOKEN: ${{ secrets.GITHUB_APP_TOKEN }}
         run: |
           echo "🔍 Resetting Git Authentication..."
-          git remote set-url origin https://$GH_PAT@github.com/${{ github.repository }}
-          git fetch --unshallow  # Ensure full commit history
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions@github.com"
+          git remote set-url origin https://x-access-token:$GITHUB_APP_TOKEN@github.com/${{ github.repository }}
+          git fetch --unshallow
           git tag $TAG_NAME
           echo "🔍 Attempting to push tag..."
           GIT_CURL_VERBOSE=1 GIT_TRACE=1 git push origin $TAG_NAME || (echo "❌ Failed to push tag"; exit 1)
