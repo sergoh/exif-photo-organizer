@@ -8,8 +8,8 @@ A simple tool that fixes photo timestamps so they show up in the correct order w
 
 ### **1️⃣ Download the Program**  
 1. **Go to the download page**:  
-   [🔗 Latest Release](https://github.com/sergoh/exif-photo-organizer/releases/latest)
-2. **Download the correct file for your operating system**:
+   [🔗 Latest Release](https://github.com/YOUR_GITHUB_USERNAME/exif-photo-organizer/releases/latest)
+2. **Download the correct file**:
    - **Mac**: `exif-photo-organizer-mac`
    - **Windows**: `exif-photo-organizer-win.exe`
    - **Linux**: `exif-photo-organizer-linux`
@@ -31,6 +31,29 @@ A simple tool that fixes photo timestamps so they show up in the correct order w
    ```
    _(Replace "YOURNAME" with your actual username, and "YOURFOLDER" with the folder name where your photos are stored.)_
 
+#### **🔧 If You See a macOS Security Warning**
+If you get an error saying **"Apple cannot verify the app for malware"**, follow these steps:
+
+1. **Go to System Settings → Privacy & Security**.
+2. Scroll down and look for a message saying:
+   - *"exif-photo-organizer-mac was blocked from use"*
+3. Click **"Allow Anyway."**
+4. Run the program again:
+   ```bash
+   ./exif-photo-organizer-mac
+   ```
+5. macOS will still warn you. Click **"Open Anyway."**
+
+#### **🔧 Remove Quarantine Warning Permanently**
+If macOS keeps blocking the file, remove its **quarantine flag**:
+```bash
+xattr -d com.apple.quarantine exif-photo-organizer-mac
+```
+Then, try running the program again:
+```bash
+./exif-photo-organizer-mac
+```
+
 ---
 
 ### **🖥️ Windows**
@@ -46,14 +69,16 @@ A simple tool that fixes photo timestamps so they show up in the correct order w
 ---
 
 ### **🖥️ Linux**
-1. **Open a terminal**.
-2. **Navigate to your photos folder**, then **run the program**:
+1. **Open the Terminal.**
+2. **Navigate to your photos folder**:
    ```bash
-   cd /home/YOURNAME/Pictures/YOURFOLDER
+   cd /home/yourname/Pictures/yourfolder
+   ```
+3. **Make the file executable and run it**:
+   ```bash
    chmod +x exif-photo-organizer-linux
    ./exif-photo-organizer-linux
    ```
-   _(Replace "YOURNAME" with your actual Linux username.)_
 
 ---
 
@@ -145,30 +170,25 @@ If you want to create a **buildable package** that runs without Python installed
 
 2. **Create the standalone executable**:
    ```bash
-   poetry run pyinstaller --onefile --name exif-photo-organizer-${{ runner.os }} update_exif.py
+   poetry run pyinstaller --onefile --name exif-photo-organizer update_exif.py
    ```
 
 3. **Locate the built executable**:
-   - On **Mac**, the file will be:
+   - On **Mac/Linux**, the file will be in:
      ```bash
-     ./dist/exif-photo-organizer-mac
+     ./dist/exif-photo-organizer
      ```
-   - On **Windows**, it will be:
+   - On **Windows**, it will be in:
      ```powershell
-     dist\exif-photo-organizer-win.exe
-     ```
-   - On **Linux**, it will be:
-     ```bash
-     ./dist/exif-photo-organizer-linux
+     dist\exif-photo-organizer.exe
      ```
 
 4. **Run the generated executable**:
    ```bash
-   ./dist/exif-photo-organizer-mac  # Mac
-   ./dist/exif-photo-organizer-linux  # Linux
+   ./dist/exif-photo-organizer  # Mac/Linux
    ```
    ```powershell
-   dist\exif-photo-organizer-win.exe  # Windows
+   dist\exif-photo-organizer.exe  # Windows
    ```
 
 Now users can run the tool **without needing to install Python** by downloading the pre-built executable.
