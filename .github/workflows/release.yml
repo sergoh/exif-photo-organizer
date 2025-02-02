@@ -54,11 +54,11 @@ jobs:
 
       - name: Debug GitHub Secrets
         run: |
-          if [[ -z "${{ secrets.GH_PAT }}" ]]; then
-            echo "❌ GH_PAT is NOT set! Check repo settings."
+          if [[ -z "${{ secrets.GH_APP_TOKEN }}" ]]; then
+            echo "❌ GH_APP_TOKEN is NOT set! Check repo settings."
             exit 1
           else
-            echo "✅ GH_PAT is set correctly."
+            echo "✅ GH_APP_TOKEN is set correctly."
           fi
 
       - name: Get Version Tag
@@ -70,18 +70,28 @@ jobs:
 
       - name: Configure Git User
         run: |
-          git config --global user.name "github-actions"
+          git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions@github.com"
+
+      - name: Debug Git Remote & Authentication
+        env:
+          GH_APP_TOKEN: ${{ secrets.GH_APP_TOKEN }}
+        run: |
+          echo "🔍 Checking Git Remote..."
+          git remote -v
+          echo "🔍 Setting Git Remote with GitHub App Token..."
+          git remote set-url origin https://x-access-token:$GH_APP_TOKEN@github.com/${{ github.repository }}
+          echo "✅ Git Remote is now set to:"
+          git remote -v
+          echo "🔍 Testing Push Access..."
+          git push --dry-run origin main || (echo "❌ Push test failed"; exit 1)
 
       - name: Authenticate & Push Git Tag
         env:
-          GITHUB_APP_TOKEN: ${{ secrets.GITHUB_APP_TOKEN }}
+          GH_APP_TOKEN: ${{ secrets.GH_APP_TOKEN }}
         run: |
           echo "🔍 Resetting Git Authentication..."
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions@github.com"
-          git remote set-url origin https://x-access-token:$GITHUB_APP_TOKEN@github.com/${{ github.repository }}
-          git fetch --unshallow
+          git remote set-url origin https://x-access-token:$GH_APP_TOKEN@github.com/${{ github.repository }}
           git tag $TAG_NAME
           echo "🔍 Attempting to push tag..."
           GIT_CURL_VERBOSE=1 GIT_TRACE=1 git push origin $TAG_NAME || (echo "❌ Failed to push tag"; exit 1)
@@ -98,4 +108,4 @@ jobs:
           tag_name: ${{ env.TAG_NAME }}
           files: dist/exif-photo-organizer*
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}  # Make sure to use GH_PAT
+          GITHUB_TOKEN: ${{ secrets.GH_APP_TOKEN }}  # Make sure to use GH_APP_TOKEN
