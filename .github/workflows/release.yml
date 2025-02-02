@@ -1,4 +1,4 @@
-name: Build & Release EXIF Photo Organizer
+name: Build & Release Photo Organizer
 
 on:
   push:
@@ -32,9 +32,11 @@ jobs:
           
           if echo "$CHANGED_FILES" | grep -q -E '(\.py|pyproject\.toml|poetry\.lock|src/)'; then
             echo "Code changes detected."
+            echo "code_changed=true" >> $GITHUB_ENV
             echo "::set-output name=code_changed::true"
           else
             echo "No relevant code changes detected."
+            echo "code_changed=false" >> $GITHUB_ENV
             echo "::set-output name=code_changed::false"
           fi
 
@@ -70,38 +72,38 @@ jobs:
       - name: Build Executable (Linux)
         if: runner.os == 'Linux'
         run: |
-          poetry run pyinstaller --onefile --name exif-photo-organizer-linux src/exif_photo_organizer/update_exif.py
+          poetry run pyinstaller --onefile --name photo-organizer-linux src/exif_photo_organizer/main.py
 
       - name: Build Executable (Mac)
         if: runner.os == 'macOS'
         run: |
-          poetry run pyinstaller --onefile --name exif-photo-organizer-mac src/exif_photo_organizer/update_exif.py
+          poetry run pyinstaller --onefile --name photo-organizer-mac src/exif_photo_organizer/main.py
 
       - name: Build Executable (Windows)
         if: runner.os == 'Windows'
         run: |
-          poetry run pyinstaller --onefile --name exif-photo-organizer-win src/exif_photo_organizer/update_exif.py
+          poetry run pyinstaller --onefile --name photo-organizer-win.exe src/exif_photo_organizer/main.py
 
       - name: Upload Mac Executable
         if: runner.os == 'macOS'
         uses: actions/upload-artifact@v4
         with:
-          name: exif-photo-organizer-mac
-          path: dist/exif-photo-organizer-mac
+          name: photo-organizer-mac
+          path: dist/photo-organizer-mac
 
       - name: Upload Linux Executable
         if: runner.os == 'Linux'
         uses: actions/upload-artifact@v4
         with:
-          name: exif-photo-organizer-linux
-          path: dist/exif-photo-organizer-linux
+          name: photo-organizer-linux
+          path: dist/photo-organizer-linux
 
       - name: Upload Windows Executable
         if: runner.os == 'Windows'
         uses: actions/upload-artifact@v4
         with:
-          name: exif-photo-organizer-win
-          path: dist/exif-photo-organizer-win.exe
+          name: photo-organizer-win
+          path: dist/photo-organizer-win.exe
 
   release:
     name: Create GitHub Release
@@ -137,19 +139,19 @@ jobs:
       - name: Download Mac Executable
         uses: actions/download-artifact@v4
         with:
-          name: exif-photo-organizer-mac
+          name: photo-organizer-mac
           path: dist/
 
       - name: Download Linux Executable
         uses: actions/download-artifact@v4
         with:
-          name: exif-photo-organizer-linux
+          name: photo-organizer-linux
           path: dist/
 
       - name: Download Windows Executable
         uses: actions/download-artifact@v4
         with:
-          name: exif-photo-organizer-win
+          name: photo-organizer-win
           path: dist/
 
       - name: Create GitHub Release
@@ -157,8 +159,8 @@ jobs:
         with:
           tag_name: ${{ env.TAG_NAME }}
           files: |
-            dist/exif-photo-organizer-mac
-            dist/exif-photo-organizer-linux
-            dist/exif-photo-organizer-win.exe
+            dist/photo-organizer-mac
+            dist/photo-organizer-linux
+            dist/photo-organizer-win.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Uses built-in token

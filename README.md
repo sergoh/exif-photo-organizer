@@ -1,6 +1,6 @@
-# 🌝 EXIF Photo Organizer
+# 🌝 Photo Organizer
 
-A simple tool that fixes photo timestamps so they show up in the correct order when imported to an iPhone.
+A simple tool that creates **renamed copies** of photos with timestamps in the correct order for iPhone Photos.
 
 ---
 
@@ -10,9 +10,9 @@ A simple tool that fixes photo timestamps so they show up in the correct order w
 1. **Go to the download page**:  
    [🔗 Latest Release](https://github.com/sergoh/exif-photo-organizer/releases/latest)
 2. **Download the correct file**:
-   - **Mac**: `exif-photo-organizer-mac`
-   - **Windows**: `exif-photo-organizer-win.exe`
-   - **Linux**: `exif-photo-organizer-linux`
+   - **Mac**: `photo-organizer-mac`
+   - **Windows**: `photo-organizer-win.exe`
+   - **Linux**: `photo-organizer-linux`
 
 ### **2️⃣ Move the File to Your Photos Folder**  
 - Move the downloaded file to the **folder where your photos are stored**.
@@ -33,8 +33,8 @@ A simple tool that fixes photo timestamps so they show up in the correct order w
 3. **Navigate to your photos folder**, then **run the program**:
    ```bash
    cd /PATH/TO/YOUR/PICTURE/FOLDER
-   chmod +x exif-photo-organizer-mac
-   ./exif-photo-organizer-mac
+   chmod +x photo-organizer-mac
+   ./photo-organizer-mac
    ```
    _(Replace "/PATH/TO/YOUR/PICTURE/FOLDER" with the actual path you copied from Finder.)_
 
@@ -43,22 +43,22 @@ If you get an error saying **"Apple cannot verify the app for malware"**, follow
 
 1. **Go to System Settings → Privacy & Security**.
 2. Scroll down and look for a message saying:
-   - *"exif-photo-organizer-mac was blocked from use"*
+   - *"photo-organizer-mac was blocked from use"*
 3. Click **"Allow Anyway."**
 4. Run the program again:
    ```bash
-   ./exif-photo-organizer-mac
+   ./photo-organizer-mac
    ```
 5. macOS will still warn you. Click **"Open Anyway."**
 
 #### **🔧 Remove Quarantine Warning Permanently**
 If macOS keeps blocking the file, remove its **quarantine flag**:
 ```bash
-xattr -d com.apple.quarantine exif-photo-organizer-mac
+xattr -d com.apple.quarantine photo-organizer-mac
 ```
 Then, try running the program again:
 ```bash
-./exif-photo-organizer-mac
+./photo-organizer-mac
 ```
 
 ---
@@ -69,7 +69,7 @@ Then, try running the program again:
 2. **Navigate to your photos folder**, then **run the program**:
    ```powershell
    cd C:\Users\YourName\Pictures\YourFolder
-   exif-photo-organizer-win.exe
+   photo-organizer-win.exe
    ```
    _(Replace "YourName" with your actual Windows username and "YourFolder" with the folder name where your photos are stored.)_
 
@@ -83,30 +83,39 @@ Then, try running the program again:
    ```
 3. **Make the file executable and run it**:
    ```bash
-   chmod +x exif-photo-organizer-linux
-   ./exif-photo-organizer-linux
+   chmod +x photo-organizer-linux
+   ./photo-organizer-linux
    ```
 
 ---
 
-## 🛠️ How to Verify It Worked
-If you want to **check that the timestamps were updated correctly**, follow these steps:
+## 🛠️ What This Program Does
+- **Creates renamed copies of all `.JPG` and `.JPEG` files in the folder.**
+- **Adds timestamps to ensure correct ordering on iPhone.**
+- **Renames files to `Wedding Picture 01.jpg`, `Wedding Picture 02.jpg`, etc.**
+- **Leaves the original files untouched.**
 
-### **Mac**
-1. Right-click the photo → Click **Get Info**.
-2. Check the **Date Created** and **Date Modified** fields.
+When finished, you'll see ✅ confirmation messages.
 
-### **Windows**
-1. Right-click the photo → Click **Properties** → Go to the **Details** tab.
-2. Check the **Date Taken** and **Created Date** fields.
+---
 
-### **Linux**
-1. Open the Terminal.
-2. Run:
+## 🔍 How to Verify It Worked  
+If you want to **check that the files were created and renamed correctly**, follow these steps:
+
+### **Mac**  
+1. Open **Finder** and navigate to the folder.
+2. Check that new files appear as **"Wedding Picture 01.jpg", "Wedding Picture 02.jpg", etc."**
+
+### **Windows**  
+1. Open **File Explorer** and navigate to the folder.
+2. Confirm that new copies exist and are correctly ordered.
+
+### **Linux**  
+1. Open the Terminal and list the files:
    ```bash
-   exiftool /path/to/photo.jpg
+   ls -l
    ```
-3. Look for `DateTimeOriginal` and `CreateDate` fields to confirm that the timestamps were updated.
+2. Check that the newly created images are in correct order.
 
 ---
 
@@ -116,7 +125,7 @@ If you want to use the Python script directly **(instead of using the compiled e
 
 ### **1️⃣ Clone the repository**
 ```bash
-git clone https://github.com/YOUR_GITHUB_USERNAME/exif-photo-organizer.git
+git clone https://github.com/sergoh/exif-photo-organizer.git
 cd exif-photo-organizer
 ```
 
@@ -127,14 +136,14 @@ poetry install
 
 ### **3️⃣ Run the script**
 ```bash
-poetry run python update_exif.py
+poetry run python src/exif_photo_organizer/update_exif.py
 ```
 
-By default, the script **modifies images in the current directory**.
+By default, the script **creates new copies in the current directory**.
 
 ---
 
-## 🛠️ Building a Standalone Executable
+## 🛠️ Building a Standalone Executable  
 If you want to manually build a standalone executable without relying on GitHub Actions, follow these steps:
 
 ### **1️⃣ Install PyInstaller**
@@ -148,27 +157,27 @@ Run one of the following based on your operating system:
 
 #### **Mac (Apple)**
 ```bash
-poetry run pyinstaller --onefile --name exif-photo-organizer-mac update_exif.py
+poetry run pyinstaller --onefile --name photo-organizer-mac src/exif_photo_organizer/update_exif.py
 ```
 
 #### **Windows**
 ```powershell
-poetry run pyinstaller --onefile --name exif-photo-organizer-win.exe update_exif.py
+poetry run pyinstaller --onefile --name photo-organizer-win.exe src/exif_photo_organizer/update_exif.py
 ```
 
 #### **Linux**
 ```bash
-poetry run pyinstaller --onefile --name exif-photo-organizer-linux update_exif.py
+poetry run pyinstaller --onefile --name photo-organizer-linux src/exif_photo_organizer/update_exif.py
 ```
 
 ### **3️⃣ Locate the Built Executable**
 - **Mac/Linux:**  
   ```bash
-  ./dist/exif-photo-organizer-mac  # or exif-photo-organizer-linux
+  ./dist/photo-organizer-mac  # or photo-organizer-linux
   ```
 - **Windows:**  
   ```powershell
-  dist\exif-photo-organizer-win.exe
+  dist\photo-organizer-win.exe
   ```
 
 ---
