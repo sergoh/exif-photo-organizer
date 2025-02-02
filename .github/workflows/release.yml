@@ -69,10 +69,18 @@ jobs:
       - name: Install PyInstaller
         run: poetry add --dev pyinstaller
 
-      - name: Build Executable
+      - name: Build Executable (Linux/Mac)
+        if: runner.os == 'Linux' || runner.os == 'macOS'
         run: |
           OUTPUT_NAME="exif-photo-organizer-${{ runner.os }}"
           poetry run pyinstaller --onefile --name $OUTPUT_NAME update_exif.py
+
+      - name: Build Executable (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          $OUTPUT_NAME="exif-photo-organizer-Windows"
+          poetry run pyinstaller --onefile --name $OUTPUT_NAME update_exif.py
+        shell: pwsh
 
       - name: Upload Mac Executable
         if: runner.os == 'macOS'
