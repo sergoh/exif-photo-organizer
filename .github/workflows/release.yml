@@ -82,26 +82,30 @@ jobs:
           poetry run pyinstaller --onefile --name $OUTPUT_NAME update_exif.py
         shell: pwsh
 
+      - name: List Dist Contents (Debug)  # ✅ Debugging step for Linux
+        if: runner.os == 'Linux'
+        run: ls -lah dist/
+
       - name: Upload Mac Executable
         if: runner.os == 'macOS'
         uses: actions/upload-artifact@v4
         with:
           name: exif-photo-organizer-mac
-          path: dist/exif-photo-organizer-mac*
+          path: dist/exif-photo-organizer-mac
 
       - name: Upload Linux Executable
         if: runner.os == 'Linux'
         uses: actions/upload-artifact@v4
         with:
           name: exif-photo-organizer-linux
-          path: dist/exif-photo-organizer-linux*
+          path: dist/exif-photo-organizer-linux
 
       - name: Upload Windows Executable
         if: runner.os == 'Windows'
         uses: actions/upload-artifact@v4
         with:
           name: exif-photo-organizer-win
-          path: dist/exif-photo-organizer-win.exe*
+          path: dist/exif-photo-organizer-win.exe
 
   release:
     name: Create GitHub Release
@@ -139,21 +143,18 @@ jobs:
         with:
           name: exif-photo-organizer-mac
           path: dist/
-          merge-multiple: true
 
       - name: Download Linux Executable
         uses: actions/download-artifact@v4
         with:
           name: exif-photo-organizer-linux
           path: dist/
-          merge-multiple: true
 
       - name: Download Windows Executable
         uses: actions/download-artifact@v4
         with:
           name: exif-photo-organizer-win
           path: dist/
-          merge-multiple: true
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
