@@ -54,11 +54,11 @@ jobs:
 
       - name: Debug GitHub Secrets
         run: |
-          if [[ -z "${{ secrets.GH_APP_TOKEN }}" ]]; then
-            echo "❌ GH_APP_TOKEN is NOT set! Check repo settings."
+          if [[ -z "${{ secrets.GH_APP_PRIVATE_KEY }}" ]]; then
+            echo "❌ GH_APP_PRIVATE_KEY is NOT set! Check repo settings."
             exit 1
           else
-            echo "✅ GH_APP_TOKEN is set correctly."
+            echo "✅ GH_APP_PRIVATE_KEY is set correctly."
           fi
 
       - name: Get Version Tag
@@ -68,30 +68,36 @@ jobs:
           echo "TAG_NAME=v1.0.$(date +%s)" >> $GITHUB_ENV
           echo "Generated tag: $TAG_NAME"
 
+      - name: Generate GitHub App Installation Token
+        id: generate_token
+        run: |
+          GH_APP_ID="1130921"
+          GH_APP_INSTALLATION_ID="60410977"  # Replace with your Installation ID
+          GH_PRIVATE_KEY="${{ secrets.GH_APP_PRIVATE_KEY }}"
+
+          # Generate a JWT for authentication
+          GH_JWT=$(echo -n "$GH_PRIVATE_KEY" | base64 -d | openssl dgst -sha256 -sign /dev/stdin | openssl base64 -A)
+
+          # Get the installation access token
+          GH_ACCESS_TOKEN=$(curl -s -X POST \
+            -H "Authorization: Bearer $GH_JWT" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/app/installations/$GH_APP_INSTALLATION_ID/access_tokens" | jq -r .token)
+
+          echo "::add-mask::$GH_ACCESS_TOKEN"
+          echo "GH_ACCESS_TOKEN=$GH_ACCESS_TOKEN" >> $GITHUB_ENV
+
       - name: Configure Git User
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions@github.com"
 
-      - name: Debug Git Remote & Authentication
-        env:
-          GH_APP_TOKEN: ${{ secrets.GH_APP_TOKEN }}
-        run: |
-          echo "🔍 Checking Git Remote..."
-          git remote -v
-          echo "🔍 Setting Git Remote with GitHub App Token..."
-          git remote set-url origin https://x-access-token:$GH_APP_TOKEN@github.com/${{ github.repository }}
-          echo "✅ Git Remote is now set to:"
-          git remote -v
-          echo "🔍 Testing Push Access..."
-          git push --dry-run origin main || (echo "❌ Push test failed"; exit 1)
-
       - name: Authenticate & Push Git Tag
         env:
-          GH_APP_TOKEN: ${{ secrets.GH_APP_TOKEN }}
+          GH_ACCESS_TOKEN: ${{ env.GH_ACCESS_TOKEN }}
         run: |
           echo "🔍 Resetting Git Authentication..."
-          git remote set-url origin https://x-access-token:$GH_APP_TOKEN@github.com/${{ github.repository }}
+          git remote set-url origin https://x-access-token:$GH_ACCESS_TOKEN@github.com/${{ github.repository }}
           git tag $TAG_NAME
           echo "🔍 Attempting to push tag..."
           GIT_CURL_VERBOSE=1 GIT_TRACE=1 git push origin $TAG_NAME || (echo "❌ Failed to push tag"; exit 1)
@@ -108,4 +114,4 @@ jobs:
           tag_name: ${{ env.TAG_NAME }}
           files: dist/exif-photo-organizer*
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_APP_TOKEN }}  # Make sure to use GH_APP_TOKEN
+          GITHUB_TOKEN: ${{ env.GH_ACCESS_TOKEN }}  # Make sure to use GH_ACCESS_TOKEN
