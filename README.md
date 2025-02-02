@@ -119,8 +119,45 @@ If no `.env` file is present, the script will default to using the **current dir
 
 ---
 
+## 🛠️ Building a Standalone Executable
+
+If you want to create a **buildable package** that runs without Python installed, you can use **PyInstaller**.
+
+### **Steps to Build:**
+
+1. **Ensure PyInstaller is installed**:
+   ```bash
+   poetry add --dev pyinstaller
+   ```
+
+2. **Create the standalone executable**:
+   ```bash
+   poetry run pyinstaller --onefile --name exif-photo-organizer update_exif.py
+   ```
+
+3. **Locate the built executable**:
+   - On **Mac/Linux**, the file will be in:
+     ```bash
+     ./dist/exif-photo-organizer
+     ```
+   - On **Windows**, it will be in:
+     ```powershell
+     dist\exif-photo-organizer.exe
+     ```
+
+4. **Run the generated executable**:
+   ```bash
+   ./dist/exif-photo-organizer  # Mac/Linux
+   ```
+   ```powershell
+   dist\exif-photo-organizer.exe  # Windows
+   ```
+
+Now users can run the tool **without needing to install Python** by downloading the pre-built executable.
+
+---
+
 ## 🌟 Credits  
 Made with ❤️ by **Sergoh**  
 
 📚 **License:** MIT License  
-
