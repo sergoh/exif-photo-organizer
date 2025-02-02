@@ -2,7 +2,7 @@ import os
 import piexif
 from PIL import Image
 from datetime import datetime, timedelta
-
+# Triggering a new GitHub Actions build
 # Absolute path to your photos
 IMAGE_FOLDER = "/Users/sergoh/Desktop/2025-01-24 V&S wedding/Photos"
 
