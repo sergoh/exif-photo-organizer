@@ -37,7 +37,7 @@ for index, filename in enumerate(image_files):
     formatted_time = new_timestamp.strftime("%Y:%m:%d %H:%M:%S")
 
     # Generate EXIF Title (Wedding Picture 01, Wedding Picture 02, ...)
-    title = f"Wedding Picture {index + 1:02d}"
+    title = f"Picture {index + 1:02d}"
 
     # Load existing EXIF data
     exif_dict = piexif.load(img.info.get("exif", b""))
