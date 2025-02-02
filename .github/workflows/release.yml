@@ -146,14 +146,10 @@ jobs:
         with:
           name: exif-photo-organizer-win
           path: dist/
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.TAG_NAME }}
-          files: 
-            - dist/exif-photo-organizer-mac
-            - dist/exif-photo-organizer-linux
-            - dist/exif-photo-organizer-win.exe
+          files: dist/exif-photo-organizer-mac, dist/exif-photo-organizer-linux, dist/exif-photo-organizer-win.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Uses built-in token
