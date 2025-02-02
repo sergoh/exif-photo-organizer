@@ -89,6 +89,27 @@ Then, try running the program again:
 
 ---
 
+## 🛠️ How to Verify It Worked
+If you want to **check that the timestamps were updated correctly**, follow these steps:
+
+### **Mac**
+1. Right-click the photo → Click **Get Info**.
+2. Check the **Date Created** and **Date Modified** fields.
+
+### **Windows**
+1. Right-click the photo → Click **Properties** → Go to the **Details** tab.
+2. Check the **Date Taken** and **Created Date** fields.
+
+### **Linux**
+1. Open the Terminal.
+2. Run:
+   ```bash
+   exiftool /path/to/photo.jpg
+   ```
+3. Look for `DateTimeOriginal` and `CreateDate` fields to confirm that the timestamps were updated.
+
+---
+
 ## 🛠️ For Developers: Running the Script Manually  
 
 If you want to use the Python script directly **(instead of using the compiled executable)**:
@@ -156,3 +177,4 @@ poetry run pyinstaller --onefile --name exif-photo-organizer-linux update_exif.p
 Made with ❤️ by **Sergoh**  
 
 📚 **License:** MIT License  
+
