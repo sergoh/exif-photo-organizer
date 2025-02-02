@@ -4,6 +4,7 @@ import piexif.helper
 from PIL import Image
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
+
 # Load environment variables from .env (optional for local development)
 load_dotenv()
 
@@ -46,11 +47,10 @@ for index, filename in enumerate(image_files):
     exif_dict["Exif"][piexif.ExifIFD.DateTimeOriginal] = formatted_time.encode()
     exif_dict["Exif"][piexif.ExifIFD.DateTimeDigitized] = formatted_time.encode()
 
-    # ✅ Set title in IPTC metadata (Used by Apple Photos)
-    iptc_data = {5: title.encode()}  # IPTC Object Name (0x5)
-    exif_dict["1st"] = piexif.helper.UserComment.dump(iptc_data)
+    # ✅ Set title in UserComment field
+    exif_dict["Exif"][piexif.ExifIFD.UserComment] = piexif.helper.UserComment.dump(title)
 
-    # Save modified EXIF & IPTC data
+    # Save modified EXIF data
     exif_bytes = piexif.dump(exif_dict)
     img.save(file_path, "jpeg", exif=exif_bytes)
 
