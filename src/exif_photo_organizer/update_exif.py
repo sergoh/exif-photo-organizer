@@ -2,22 +2,29 @@ import os
 import piexif
 from PIL import Image
 from datetime import datetime, timedelta
-# Triggering a new GitHub Actions build
-# Absolute path to your photos
-IMAGE_FOLDER = "/Users/sergoh/Desktop/2025-01-24 V&S wedding/Photos"
+from dotenv import load_dotenv
+
+# Load environment variables from .env (optional for local development)
+load_dotenv()
+
+# Use IMAGE_FOLDER from env or default to the current directory
+IMAGE_FOLDER = os.getenv("IMAGE_FOLDER", os.getcwd())
 
 # Base timestamp to start from (adjust date & time as needed)
-base_timestamp = datetime(2025, 1, 24, 12, 0, 0)  # Year-Month-Day Hour:Min:Sec
-time_increment = timedelta(seconds=10)  # Increment time per photo
+base_timestamp = datetime(2025, 1, 24, 12, 0, 0)
+time_increment = timedelta(seconds=10)
 
 # Get all image files and sort by filename (ensure proper order)
-image_files = sorted([f for f in os.listdir(IMAGE_FOLDER) if f.lower().endswith(('.jpg', '.jpeg'))])
+image_files = sorted([
+    f for f in os.listdir(IMAGE_FOLDER)
+    if f.lower().endswith(('.jpg', '.jpeg'))
+])
 
 if not image_files:
-    print("❌ No images found in the specified folder!")
+    print(f"❌ No images found in '{IMAGE_FOLDER}'!")
     exit(1)
 
-print(f"📷 Found {len(image_files)} images. Updating EXIF metadata...\n")
+print(f"📷 Found {len(image_files)} images in '{IMAGE_FOLDER}'. Updating EXIF metadata...\n")
 
 for index, filename in enumerate(image_files):
     file_path = os.path.join(IMAGE_FOLDER, filename)
